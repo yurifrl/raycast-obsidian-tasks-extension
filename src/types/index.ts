@@ -1,5 +1,8 @@
 export interface Preferences {
   filePath: string;
+  useDailyNote: boolean;
+  dailyNotesFolder: string;
+  dailyNotePattern: string;
   showDueDate: boolean;
   maxMenubarDescriptionLength: string;
   menubarTaskCount: boolean;

@@ -8,8 +8,14 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 type ExtensionPreferences = {
-  /** Tasks File In Your Vault - Path to your tasks file in your vault */
-  "filePath": string,
+  /** Tasks File In Your Vault - Path to your tasks file in your vault (used when daily note mode is disabled) */
+  "filePath"?: string,
+  /** Use Daily Note - Add tasks to today's daily note instead of a fixed file */
+  "useDailyNote": boolean,
+  /** Daily Notes Folder - Path to your daily notes folder in your vault */
+  "dailyNotesFolder"?: string,
+  /** Daily Note Pattern - Filename pattern for daily notes (e.g., YYYY-MM-DD) */
+  "dailyNotePattern": string,
   /** Show Due Date in Menubar - Display the due date of tasks in the menubar */
   "showDueDate": boolean,
   /** Show Task Count in Menubar - Show the number of tasks in the menubar */

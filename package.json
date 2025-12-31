@@ -53,9 +53,33 @@
     {
       "name": "filePath",
       "title": "Tasks File In Your Vault",
-      "description": "Path to your tasks file in your vault",
+      "description": "Path to your tasks file in your vault (used when daily note mode is disabled)",
       "type": "file",
-      "required": true
+      "required": false
+    },
+    {
+      "name": "useDailyNote",
+      "title": "Use Daily Note",
+      "description": "Add tasks to today's daily note instead of a fixed file",
+      "type": "checkbox",
+      "default": false,
+      "required": false,
+      "label": "Use daily note"
+    },
+    {
+      "name": "dailyNotesFolder",
+      "title": "Daily Notes Folder",
+      "description": "Path to your daily notes folder in your vault",
+      "type": "directory",
+      "required": false
+    },
+    {
+      "name": "dailyNotePattern",
+      "title": "Daily Note Pattern",
+      "description": "Filename pattern for daily notes (e.g., YYYY-MM-DD)",
+      "type": "textfield",
+      "default": "YYYY-MM-DD",
+      "required": false
     },
     {
       "name": "showDueDate",
@@ -119,17 +143,20 @@
   "devDependencies": {
     "@raycast/eslint-config": "^1.0.6",
     "@types/fs-extra": "^9.0.13",
-    "@types/node": "~18.8.3",
+    "@types/node": "^25.0.3",
     "@types/react": "^18.0.28",
     "eslint": "^8.42.0",
     "prettier": "^2.8.8",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.4",
+    "vitest": "^4.0.16"
   },
   "scripts": {
     "build": "ray build -e dist -o ./dist",
     "dev": "ray develop",
     "lint": "ray lint && npm run format:check",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
+    "test": "vitest run",
+    "test:watch": "vitest"
   }
 }
