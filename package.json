@@ -5,6 +5,7 @@
   "description": "Manage your Obsidian Tasks through Raycast",
   "icon": "command-icon.png",
   "author": "ozencb",
+  "contributors": ["yurifrl"],
   "owner": "yuri-personal-inc",
   "license": "MIT",
   "categories": [
@@ -23,7 +24,18 @@
       "name": "list-tasks",
       "title": "List Tasks",
       "description": "List all Obsidian tasks",
-      "mode": "view"
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "showDescriptionInDetails",
+          "title": "Show Description",
+          "description": "Show Description in Details Markdown",
+          "type": "checkbox",
+          "required": false,
+          "default": false,
+          "label": "Show description in details panel"
+        }
+      ]
     },
     {
       "name": "add-task",
@@ -133,6 +145,15 @@
       "default": false,
       "required": false,
       "label": "Sort by priority"
+    },
+    {
+      "name": "showOnlyCurrent",
+      "title": "Show Only Current Tasks",
+      "description": "Show only tasks with a due or scheduled date that is today or earlier",
+      "type": "checkbox",
+      "default": false,
+      "required": false,
+      "label": "Show only current tasks"
     },
     {
       "name": "maxMenubarDescriptionLength",
