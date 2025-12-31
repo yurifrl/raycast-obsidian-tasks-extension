@@ -28,6 +28,8 @@ type ExtensionPreferences = {
   "showIcon": boolean,
   /** Sort by Priority - Sort tasks by priority */
   "sortByPriority": boolean,
+  /** Show Only Current Tasks - Show only tasks with a due or scheduled date that is today or earlier */
+  "showOnlyCurrent": boolean,
   /** Max Description Length - Maximum length of task description to show in menubar */
   "maxMenubarDescriptionLength": string,
   /** Refresh Interval - Refresh interval in minutes */
@@ -39,7 +41,10 @@ declare type Preferences = ExtensionPreferences
 
 declare namespace Preferences {
   /** Preferences accessible in the `list-tasks` command */
-  export type ListTasks = ExtensionPreferences & {}
+  export type ListTasks = ExtensionPreferences & {
+  /** Show Description - Show Description in Details Markdown */
+  "showDescriptionInDetails": boolean
+}
   /** Preferences accessible in the `add-task` command */
   export type AddTask = ExtensionPreferences & {}
   /** Preferences accessible in the `edit-task` command */

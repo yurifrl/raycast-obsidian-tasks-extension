@@ -10,8 +10,13 @@ export interface Preferences {
   menubarTaskCount: boolean;
   showIcon: boolean;
   sortByPriority: boolean;
+  showOnlyCurrent: boolean;
   showCompletedDate: boolean;
   refreshIntervalInMinutes: string;
+}
+
+export interface ListTasksPreferences {
+  showDescriptionInDetails: boolean;
 }
 
 export enum Priority {

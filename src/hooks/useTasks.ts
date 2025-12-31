@@ -8,6 +8,7 @@ import {
 } from "../utils/taskOperations";
 import { Preferences, Priority, Task } from "../types";
 import { priorityToValue } from "../utils/priority";
+import { filterCurrentTasks } from "../utils/taskFilters";
 
 export const useTasks = (preferences: Preferences) => {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
@@ -19,7 +20,10 @@ export const useTasks = (preferences: Preferences) => {
       setIsLoading(true);
       const highestPriorityTask = await getHighestPriorityTask();
       setTopTask(highestPriorityTask);
-      const tasks = await getAllUncompletedTasks();
+      let tasks = await getAllUncompletedTasks();
+
+      // Filter to show only current tasks (due/scheduled today or earlier)
+      tasks = filterCurrentTasks(tasks, preferences.showOnlyCurrent);
 
       if (preferences.sortByPriority) {
         tasks.sort((a, b) => {

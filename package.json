@@ -4,8 +4,8 @@
   "title": "Obsidian Tasks",
   "description": "Manage your Obsidian Tasks through Raycast",
   "icon": "command-icon.png",
-  "author": "ozencb",
-  "contributors": ["yurifrl"],
+  "author": "yuri_freire",
+  "contributors": ["ozencb"],
   "owner": "yuri-personal-inc",
   "license": "MIT",
   "categories": [

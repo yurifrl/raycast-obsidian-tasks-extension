@@ -1,5 +1,5 @@
-import { Action, ActionPanel, Color, Icon, List } from "@raycast/api";
-import { Task } from "../types";
+import { Action, ActionPanel, Color, getPreferenceValues, Icon, List } from "@raycast/api";
+import { ListTasksPreferences, Task } from "../types";
 import { getFormattedDescription } from "../utils";
 import { priorityToIcon } from "../utils/priority";
 
@@ -10,6 +10,8 @@ interface TaskItemProps {
   onEdit?: (task: Task) => void;
   showActions?: boolean;
 }
+
+const listTaskPreferences = getPreferenceValues<ListTasksPreferences>();
 
 export function TaskItem({
   task,
@@ -28,6 +30,7 @@ export function TaskItem({
       icon={task.completed ? Icon.Checkmark : priorityMeta.icon}
       detail={
         <List.Item.Detail
+          markdown={listTaskPreferences.showDescriptionInDetails ? taskDesc : undefined}
           metadata={
             <List.Item.Detail.Metadata>
               <List.Item.Detail.Metadata.Label
