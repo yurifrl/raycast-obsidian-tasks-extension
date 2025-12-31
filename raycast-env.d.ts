@@ -16,6 +16,10 @@ type ExtensionPreferences = {
   "dailyNotesFolder"?: string,
   /** Daily Note Pattern - Filename pattern for daily notes (e.g., YYYY-MM-DD) */
   "dailyNotePattern": string,
+  /** Insert After - Insert tasks after this text/pattern. Leave empty to append to file */
+  "insertAfter"?: string,
+  /** Append to List - Find list after pattern and append to it */
+  "appendToList": boolean,
   /** Show Due Date in Menubar - Display the due date of tasks in the menubar */
   "showDueDate": boolean,
   /** Show Task Count in Menubar - Show the number of tasks in the menubar */

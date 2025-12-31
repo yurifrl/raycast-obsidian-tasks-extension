@@ -19,7 +19,10 @@ describe("getTodayDailyNotePath", () => {
   it("should return today's daily note path when file exists", async () => {
     const dailyNotesFolder = "/vault/daily";
     const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(today.getDate()).padStart(2, "0")}`;
     const expectedPath = path.join(dailyNotesFolder, `${todayStr}.md`);
 
     vi.mocked(fs.pathExists).mockResolvedValue(true as never);
