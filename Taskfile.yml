@@ -1,0 +1,12 @@
+version: "3"
+
+tasks:
+  login:
+    desc: Login to Raycast
+    cmds:
+      - bunx ray login
+
+  publish:
+    desc: Publish extension to organization
+    cmds:
+      - bun run publish

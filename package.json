@@ -5,6 +5,7 @@
   "description": "Manage your Obsidian Tasks through Raycast",
   "icon": "command-icon.png",
   "author": "ozencb",
+  "owner": "yuri-personal-inc",
   "license": "MIT",
   "categories": [
     "Productivity"
@@ -173,6 +174,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "publish": "ray publish"
   }
 }
