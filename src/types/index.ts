@@ -3,6 +3,8 @@ export interface Preferences {
   useDailyNote: boolean;
   dailyNotesFolder: string;
   dailyNotePattern: string;
+  insertAfter: string;
+  appendToList: boolean;
   showDueDate: boolean;
   maxMenubarDescriptionLength: string;
   menubarTaskCount: boolean;

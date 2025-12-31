@@ -82,6 +82,22 @@
       "required": false
     },
     {
+      "name": "insertAfter",
+      "title": "Insert After",
+      "description": "Insert tasks after this text/pattern. Leave empty to append to file",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "appendToList",
+      "title": "Append to List",
+      "description": "Find list after pattern and append to it",
+      "type": "checkbox",
+      "default": false,
+      "required": false,
+      "label": "Append to list"
+    },
+    {
       "name": "showDueDate",
       "title": "Show Due Date in Menubar",
       "description": "Display the due date of tasks in the menubar",

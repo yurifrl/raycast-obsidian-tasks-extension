@@ -44,7 +44,7 @@ const Command = () => {
   const handleOpenInObsidian = async () => {
     if (!topTask || !topTask.filePath) return;
 
-    const fileName = preferences.filePath.split("/").pop() || "";
+    const fileName = topTask.filePath.split("/").pop() || "";
     const obsidianURI = `obsidian://open?file=${encodeURIComponent(fileName)}`;
     await open(obsidianURI);
   };

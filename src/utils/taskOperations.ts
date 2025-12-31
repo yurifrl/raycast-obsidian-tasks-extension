@@ -1,10 +1,73 @@
 import fs from "fs-extra";
-import { showToast, Toast } from "@raycast/api";
-import { Task, Priority } from "../types";
+import { getPreferenceValues, showToast, Toast } from "@raycast/api";
+import { Task, Priority, Preferences } from "../types";
 import { readTasksFile } from "./fileUtils";
 import { formatTask, removeSpecialCharacters } from "./taskFormatter";
 import { priorityToValue } from "./priority";
 import { refreshMenubar } from "./menubarRefresh";
+
+/**
+ * Find the position to insert a new task in the file.
+ * @param lines - Array of lines in the file
+ * @param insertAfter - Pattern to search for (supports regex)
+ * @param appendToList - If true, find list after match and append to it
+ * @returns Index where new task should be inserted
+ * @throws Error if insertAfter pattern is set but not found
+ */
+export function findInsertPosition(
+  lines: string[],
+  insertAfter: string,
+  appendToList: boolean
+): number {
+  // Empty pattern = append to end
+  if (!insertAfter) {
+    return lines.length;
+  }
+
+  // Find line matching pattern
+  const regex = new RegExp(insertAfter);
+  let matchIndex = -1;
+  for (let i = 0; i < lines.length; i++) {
+    if (regex.test(lines[i])) {
+      matchIndex = i;
+      break;
+    }
+  }
+
+  if (matchIndex === -1) {
+    throw new Error(`Pattern '${insertAfter}' not found in file`);
+  }
+
+  // If not appending to list, insert right after match
+  if (!appendToList) {
+    return matchIndex + 1;
+  }
+
+  // Find list after match and return position at end of list
+  let insertIndex = matchIndex + 1;
+  let foundList = false;
+
+  for (let i = matchIndex + 1; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Stop at next heading
+    if (trimmed.startsWith("#")) {
+      break;
+    }
+
+    // Check if line is a list item (- or *)
+    if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+      foundList = true;
+      insertIndex = i + 1;
+    } else if (foundList && trimmed !== "") {
+      // Non-list, non-empty line after list = end of list
+      break;
+    }
+  }
+
+  return insertIndex;
+}
 
 export const getAllTasks = async (): Promise<Task[]> => {
   const taskFile = await readTasksFile();
@@ -77,22 +140,31 @@ export const addTask = async (
   task: Omit<Task, "id" | "createdAt" | "line" | "filePath" | "indentation">
 ): Promise<Task> => {
   try {
+    const preferences = getPreferenceValues<Preferences>();
     const taskFile = await readTasksFile();
     const lines = taskFile.content.split("\n");
+
+    // Find where to insert the task
+    const insertIndex = findInsertPosition(
+      lines,
+      preferences.insertAfter || "",
+      preferences.appendToList || false
+    );
 
     // Create a new task with missing fields
     const newTask: Task = {
       ...task,
       id: String(lines.length),
       createdAt: new Date(),
-      line: lines.length,
+      line: insertIndex,
       filePath: taskFile.path,
       indentation: "", // Default indentation
     };
 
     const taskText = formatTask(newTask);
 
-    lines.push(taskText);
+    // Insert at the calculated position
+    lines.splice(insertIndex, 0, taskText);
 
     await fs.writeFile(taskFile.path, lines.join("\n"), "utf-8");
 

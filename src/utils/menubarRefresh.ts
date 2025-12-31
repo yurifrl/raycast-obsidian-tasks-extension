@@ -6,7 +6,7 @@ export const refreshMenubar = async (): Promise<void> => {
       name: "menubar-item",
       type: LaunchType.Background,
     });
-  } catch (error) {
-    console.error("Failed to refresh menubar:", error);
+  } catch {
+    // Silently fail - menubar command may not be enabled
   }
 };
