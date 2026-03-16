@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, ActionPanel, Action, showToast, Toast, closeMainWindow } from "@raycast/api";
+import { Form, ActionPanel, Action, showToast, Toast, closeMainWindow, popToRoot } from "@raycast/api";
 import { Priority } from "./types";
 import { addTask } from "./utils/taskOperations";
 import { ICONS } from "./constants";
@@ -72,6 +72,7 @@ export default function Command() {
     const success = await submitTask();
     if (success) {
       resetForm();
+      await popToRoot({ clearSearchBar: true });
       await closeMainWindow({ clearRootSearch: true });
     }
   };
@@ -167,7 +168,7 @@ export default function Command() {
       />
 
       <Form.Description title="Note" text="The task will be added to your Obsidian tasks file." />
-      <Form.Description title="" text="v1.2.1" />
+      <Form.Description title="" text="v1.2.2" />
     </Form>
   );
 }
