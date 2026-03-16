@@ -58,9 +58,20 @@ export default function Command() {
     }
   };
 
+  const resetForm = () => {
+    setDescription("");
+    setDueDate(null);
+    setScheduledDate(null);
+    setStartDate(null);
+    setPriority("");
+    setTags("");
+    setRecurrence("");
+  };
+
   const handleSubmitAndClose = async () => {
     const success = await submitTask();
     if (success) {
+      resetForm();
       await closeMainWindow({ clearRootSearch: true });
     }
   };
@@ -68,13 +79,7 @@ export default function Command() {
   const handleSubmitAndContinue = async () => {
     const success = await submitTask();
     if (success) {
-      setDescription("");
-      setDueDate(null);
-      setScheduledDate(null);
-      setStartDate(null);
-      setPriority("");
-      setTags("");
-      setRecurrence("");
+      resetForm();
     }
   };
 
@@ -162,7 +167,7 @@ export default function Command() {
       />
 
       <Form.Description title="Note" text="The task will be added to your Obsidian tasks file." />
-      <Form.Description title="" text="v1.2.0" />
+      <Form.Description title="" text="v1.2.1" />
     </Form>
   );
 }
