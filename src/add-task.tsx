@@ -14,13 +14,13 @@ export default function Command() {
   const [recurrence, setRecurrence] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async () => {
+  const submitTask = async () => {
     if (!description.trim()) {
       await showToast({
         style: Toast.Style.Failure,
         title: "Description is required",
       });
-      return;
+      return false;
     }
 
     setIsSubmitting(true);
@@ -44,7 +44,7 @@ export default function Command() {
         title: "Task added",
       });
 
-      await popToRoot({ clearSearchBar: true });
+      return true;
     } catch (error) {
       console.error("Error adding task:", error);
       await showToast({
@@ -52,8 +52,29 @@ export default function Command() {
         title: "Failed to add task",
         message: String(error),
       });
+      return false;
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmitAndClose = async () => {
+    const success = await submitTask();
+    if (success) {
+      await popToRoot({ clearSearchBar: true });
+    }
+  };
+
+  const handleSubmitAndContinue = async () => {
+    const success = await submitTask();
+    if (success) {
+      setDescription("");
+      setDueDate(null);
+      setScheduledDate(null);
+      setStartDate(null);
+      setPriority("");
+      setTags("");
+      setRecurrence("");
     }
   };
 
@@ -67,7 +88,12 @@ export default function Command() {
     <Form
       actions={
         <ActionPanel>
-          <Action.SubmitForm title="Add Task" onSubmit={handleSubmit} />
+          <Action.SubmitForm title="Add Task" onSubmit={handleSubmitAndClose} />
+          <Action.SubmitForm
+            title="Add Task & Continue"
+            onSubmit={handleSubmitAndContinue}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "return" }}
+          />
           <Action title="Clear Dates" onAction={handleClearDates} />
         </ActionPanel>
       }
@@ -136,7 +162,7 @@ export default function Command() {
       />
 
       <Form.Description title="Note" text="The task will be added to your Obsidian tasks file." />
-      <Form.Description title="" text="v1.0.0" />
+      <Form.Description title="" text="v1.1.0" />
     </Form>
   );
 }
