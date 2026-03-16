@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, ActionPanel, Action, showToast, Toast, closeMainWindow, popToRoot } from "@raycast/api";
 import { Priority } from "./types";
 import { addTask } from "./utils/taskOperations";
@@ -13,6 +13,12 @@ export default function Command() {
   const [tags, setTags] = useState("");
   const [recurrence, setRecurrence] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      popToRoot({ clearSearchBar: true });
+    };
+  }, []);
 
   const submitTask = async () => {
     if (!description.trim()) {
@@ -168,7 +174,7 @@ export default function Command() {
       />
 
       <Form.Description title="Note" text="The task will be added to your Obsidian tasks file." />
-      <Form.Description title="" text="v1.2.2" />
+      <Form.Description title="" text="v1.2.3" />
     </Form>
   );
 }
