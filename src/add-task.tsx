@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, ActionPanel, Action, showToast, Toast, popToRoot } from "@raycast/api";
+import { Form, ActionPanel, Action, showToast, Toast, popToRoot, environment } from "@raycast/api";
 import { Priority } from "./types";
 import { addTask } from "./utils/taskOperations";
 import { ICONS } from "./constants";
@@ -136,6 +136,7 @@ export default function Command() {
       />
 
       <Form.Description title="Note" text="The task will be added to your Obsidian tasks file." />
+      <Form.Description title="" text={`v${environment.extensionVersion ?? "unknown"}`} />
     </Form>
   );
 }

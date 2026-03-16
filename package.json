@@ -1,6 +1,7 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "obsidian-tasks",
+  "version": "1.0.0",
   "title": "Obsidian Tasks",
   "description": "Manage your Obsidian Tasks through Raycast",
   "icon": "command-icon.png",
