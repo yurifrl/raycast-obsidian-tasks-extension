@@ -30,10 +30,20 @@ type ExtensionPreferences = {
   "sortByPriority": boolean,
   /** Show Only Current Tasks - Show only tasks with a due or scheduled date that is today or earlier */
   "showOnlyCurrent": boolean,
-  /** Max Description Length - Maximum length of task description to show in menubar */
+  /** Max Description Length - Maximum length of task description to show in menubar dropdown items */
   "maxMenubarDescriptionLength": string,
+  /** Max Menubar Title Length - Maximum number of characters for the task title shown in the macOS menu bar (0 = no limit) */
+  "menubarTitleMaxLength": string,
+  /** Menubar Title Delimiter - Delimiter to split the task title (e.g. '->' or ':'). Only the text before the delimiter is shown in the menu bar */
+  "menubarTitleDelimiter"?: string,
   /** Refresh Interval - Refresh interval in minutes */
-  "refreshIntervalInMinutes": string
+  "refreshIntervalInMinutes": string,
+  /** Task Reminder Interval - Show a HUD reminder of the current task every N minutes (0 = disabled) */
+  "reminderIntervalInMinutes": string,
+  /** Test Reminder - Toggle this checkbox to fire a test HUD reminder */
+  "testReminder": boolean,
+  /** Reminder Duration - How long the HUD reminder stays visible in seconds */
+  "reminderDurationInSeconds": string
 }
 
 /** Preferences accessible in all the extension's commands */

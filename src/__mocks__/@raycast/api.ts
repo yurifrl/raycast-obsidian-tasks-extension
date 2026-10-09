@@ -1,4 +1,6 @@
-export const getPreferenceValues = () => ({
+import { vi } from "vitest";
+
+export const getPreferenceValues = vi.fn(() => ({
   filePath: "",
   showDueDate: false,
   maxMenubarDescriptionLength: "30",
@@ -10,9 +12,9 @@ export const getPreferenceValues = () => ({
   useDailyNote: false,
   dailyNotesFolder: "",
   dailyNotePattern: "YYYY-MM-DD",
-});
+}));
 
-export const showToast = () => Promise.resolve();
+export const showToast = vi.fn(() => Promise.resolve());
 
 export const Toast = {
   Style: {

@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import fs from "fs-extra";
 import path from "path";
-import { getTodayDailyNotePath, findLatestDailyNote } from "./fileUtils";
+import { getPreferenceValues } from "@raycast/api";
+import { getTodayDailyNotePath, findLatestDailyNote, getTargetFilePath } from "./fileUtils";
 
 // Mock fs-extra
 vi.mock("fs-extra");
@@ -91,5 +92,67 @@ describe("findLatestDailyNote", () => {
 
     const result = await findLatestDailyNote(dailyNotesFolder, "DD-MM-YYYY");
     expect(result).toBe(path.join(dailyNotesFolder, "30-11-2025.md"));
+  });
+});
+
+describe("getTargetFilePath — root fallback", () => {
+  const dailyNotesFolder = "/vault/daily";
+  const vaultRoot = "/vault";
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const todayFilename = `${todayStr}.md`;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(getPreferenceValues).mockReturnValue({
+      useDailyNote: true,
+      dailyNotesFolder,
+      dailyNotePattern: "YYYY-MM-DD",
+    } as never);
+  });
+
+  it("returns today's note from dailyNotesFolder when it exists", async () => {
+    vi.mocked(fs.pathExists).mockResolvedValue(true as never);
+    vi.mocked(fs.readdir).mockResolvedValue([] as never);
+
+    const result = await getTargetFilePath();
+    expect(result).toBe(path.join(dailyNotesFolder, todayFilename));
+  });
+
+  it("returns latest note from dailyNotesFolder when today's doesn't exist there", async () => {
+    vi.mocked(fs.pathExists).mockResolvedValue(false as never);
+    vi.mocked(fs.readdir).mockResolvedValue(["2025-11-30.md"] as never);
+
+    const result = await getTargetFilePath();
+    expect(result).toBe(path.join(dailyNotesFolder, "2025-11-30.md"));
+  });
+
+  it("returns today's note from vault root when dailyNotesFolder has nothing", async () => {
+    // pathExists: first call (today in dailyNotesFolder) = false, second (today in root) = true
+    vi.mocked(fs.pathExists)
+      .mockResolvedValueOnce(false as never) // daily folder check
+      .mockResolvedValueOnce(true as never); // root check
+    vi.mocked(fs.readdir).mockResolvedValue([] as never); // no files in daily folder
+
+    const result = await getTargetFilePath();
+    expect(result).toBe(path.join(vaultRoot, todayFilename));
+  });
+
+  it("returns latest note from vault root when today's note is nowhere", async () => {
+    vi.mocked(fs.pathExists).mockResolvedValue(false as never); // nothing exists anywhere
+    vi.mocked(fs.readdir)
+      .mockResolvedValueOnce([] as never) // daily folder: no matches
+      .mockResolvedValueOnce(["2025-11-28.md"] as never); // vault root: one match
+
+    const result = await getTargetFilePath();
+    expect(result).toBe(path.join(vaultRoot, "2025-11-28.md"));
+  });
+
+  it("creates today's note in vault root when nothing is found anywhere", async () => {
+    vi.mocked(fs.pathExists).mockResolvedValue(false as never);
+    vi.mocked(fs.readdir).mockResolvedValue([] as never);
+
+    const result = await getTargetFilePath();
+    expect(result).toBe(path.join(vaultRoot, todayFilename));
   });
 });

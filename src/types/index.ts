@@ -12,7 +12,12 @@ export interface Preferences {
   sortByPriority: boolean;
   showOnlyCurrent: boolean;
   showCompletedDate: boolean;
+  menubarTitleMaxLength: string;
+  menubarTitleDelimiter: string;
   refreshIntervalInMinutes: string;
+  reminderIntervalInMinutes: string;
+  testReminder: boolean;
+  reminderDurationInSeconds: string;
 }
 
 export interface ListTasksPreferences {
@@ -54,6 +59,7 @@ export interface Task {
 
 export interface TaskFile {
   content: string;
+  parsedContent: string;
   tasks: Task[];
   path: string;
 }

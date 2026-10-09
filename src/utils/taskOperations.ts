@@ -70,8 +70,28 @@ export function findInsertPosition(
 }
 
 export const getAllTasks = async (): Promise<Task[]> => {
+  const preferences = getPreferenceValues<Preferences>();
   const taskFile = await readTasksFile();
-  return taskFile.tasks;
+  const tasks = taskFile.tasks;
+
+  // Filter to only show tasks after the insertAfter pattern
+  const insertAfter = preferences.insertAfter?.trim();
+  if (insertAfter) {
+    const lines = taskFile.parsedContent.split("\n");
+    const regex = new RegExp(insertAfter);
+    let matchLine = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (regex.test(lines[i])) {
+        matchLine = i;
+        break;
+      }
+    }
+    if (matchLine >= 0) {
+      return tasks.filter((task) => task.line > matchLine);
+    }
+  }
+
+  return tasks;
 };
 
 export const getAllUncompletedTasks = async (): Promise<Task[]> => {

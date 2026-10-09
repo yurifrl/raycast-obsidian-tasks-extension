@@ -4,6 +4,16 @@ import { Priority } from "./types";
 import { addTask } from "./utils/taskOperations";
 import { ICONS } from "./constants";
 
+interface FormValues {
+  description: string;
+  priority: Priority | "";
+  dueDate: Date | null;
+  scheduledDate: Date | null;
+  startDate: Date | null;
+  recurrence: string;
+  tags: string;
+}
+
 export default function Command() {
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState<Date | null>(null);
@@ -14,8 +24,8 @@ export default function Command() {
   const [recurrence, setRecurrence] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submitTask = async () => {
-    if (!description.trim()) {
+  const submitTask = async (values: FormValues) => {
+    if (!values.description.trim()) {
       await showToast({
         style: Toast.Style.Failure,
         title: "Description is required",
@@ -26,17 +36,17 @@ export default function Command() {
     setIsSubmitting(true);
     try {
       await addTask({
-        description,
+        description: values.description,
         completed: false,
-        priority: priority || undefined,
-        dueDate: dueDate ? new Date(dueDate) : undefined,
-        scheduledDate: scheduledDate ? new Date(scheduledDate) : undefined,
-        startDate: startDate ? new Date(startDate) : undefined,
-        tags: tags
+        priority: values.priority || undefined,
+        dueDate: values.dueDate ? new Date(values.dueDate) : undefined,
+        scheduledDate: values.scheduledDate ? new Date(values.scheduledDate) : undefined,
+        startDate: values.startDate ? new Date(values.startDate) : undefined,
+        tags: values.tags
           .split(",")
           .map((tag) => tag.trim())
           .filter(Boolean),
-        recurrence: recurrence || undefined,
+        recurrence: values.recurrence || undefined,
       });
 
       await showToast({
@@ -68,8 +78,8 @@ export default function Command() {
     setRecurrence("");
   };
 
-  const handleSubmitAndClose = async () => {
-    const success = await submitTask();
+  const handleSubmitAndClose = async (values: FormValues) => {
+    const success = await submitTask(values);
     if (success) {
       resetForm();
       await popToRoot({ clearSearchBar: true });
@@ -77,8 +87,8 @@ export default function Command() {
     }
   };
 
-  const handleSubmitAndContinue = async () => {
-    const success = await submitTask();
+  const handleSubmitAndContinue = async (values: FormValues) => {
+    const success = await submitTask(values);
     if (success) {
       resetForm();
     }

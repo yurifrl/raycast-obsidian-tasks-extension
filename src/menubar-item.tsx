@@ -6,15 +6,36 @@ import {
   launchCommand,
   LaunchType,
   openExtensionPreferences,
+  LocalStorage,
+  showHUD,
 } from "@raycast/api";
+import { useEffect, useState } from "react";
 import { getFormattedDescription } from "./utils";
 import { Preferences, PRIORITY_VALUES, Task } from "./types";
 import { useTasks } from "./hooks/useTasks";
 import { priorityToIcon } from "./utils/priority";
 
+const TASK_COUNT_OVERRIDE_KEY = "menubar-task-count-override";
+
 const Command = () => {
   const preferences = getPreferenceValues<Preferences>();
   const maxLength = parseInt(preferences.maxMenubarDescriptionLength) || 30;
+
+  const [taskCountOverride, setTaskCountOverride] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    LocalStorage.getItem<boolean>(TASK_COUNT_OVERRIDE_KEY).then((value) => {
+      setTaskCountOverride(value ?? null);
+    });
+  }, []);
+
+  const showTaskCount = taskCountOverride ?? preferences.menubarTaskCount;
+
+  const toggleTaskCount = async () => {
+    const newValue = !showTaskCount;
+    setTaskCountOverride(newValue);
+    await LocalStorage.setItem(TASK_COUNT_OVERRIDE_KEY, newValue);
+  };
 
   const {
     allTasks,
@@ -26,14 +47,53 @@ const Command = () => {
     refreshTaskList,
   } = useTasks(preferences);
 
+  // HUD reminder interval
+  useEffect(() => {
+    const reminderMinutes = parseInt(preferences.reminderIntervalInMinutes) || 0;
+    if (reminderMinutes <= 0 || !topTask) return;
+
+    const interval = setInterval(() => {
+      if (topTask) {
+        const desc = getFormattedDescription(topTask);
+        showHUD(`📌 ${desc}`);
+      }
+    }, reminderMinutes * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [topTask, preferences.reminderIntervalInMinutes]);
+
+  // Test reminder: fire HUD whenever the checkbox is toggled on
+  useEffect(() => {
+    if (preferences.testReminder && topTask) {
+      const desc = getFormattedDescription(topTask);
+      showHUD(`📌 ${desc}`);
+    } else if (preferences.testReminder) {
+      showHUD("No tasks to remind");
+    }
+  }, [preferences.testReminder]);
+
   const getMenubarTitle = (task: Task): string => {
     if (!task) return "No Tasks";
 
-    if (preferences.menubarTaskCount) {
+    if (showTaskCount) {
       return `${allTasks.length.toString()}`;
     }
 
-    const parts: string[] = [getFormattedDescription(task)];
+    let description = getFormattedDescription(task);
+
+    // Apply delimiter: show only the part before the delimiter
+    const delimiter = preferences.menubarTitleDelimiter?.trim();
+    if (delimiter && description.includes(delimiter)) {
+      description = description.split(delimiter)[0].trim();
+    }
+
+    // Apply max length
+    const titleMaxLength = parseInt(preferences.menubarTitleMaxLength) || 0;
+    if (titleMaxLength > 0 && description.length > titleMaxLength) {
+      description = description.substring(0, titleMaxLength).trim() + "...";
+    }
+
+    const parts: string[] = [description];
 
     if (preferences.showDueDate && task.dueDate) {
       parts.push(`${task.dueDate.toLocaleDateString()}`);
@@ -82,6 +142,12 @@ const Command = () => {
       />
 
       <MenuBarExtra.Item
+        title={showTaskCount ? "Show Task Name" : "Show Task Count"}
+        icon={showTaskCount ? Icon.Text : Icon.NumberList}
+        onAction={toggleTaskCount}
+      />
+
+      <MenuBarExtra.Item
         title="Open Extension Preferences"
         icon={Icon.Gear}
         onAction={openExtensionPreferences}
@@ -90,7 +156,7 @@ const Command = () => {
     </>
   );
 
-  if (isLoading) {
+  if (isLoading || taskCountOverride === undefined) {
     return (
       <MenuBarExtra icon={Icon.Clock} tooltip="Loading tasks...">
         <MenuBarExtra.Item title="Obsidian Tasks is loading..." />
@@ -106,7 +172,7 @@ const Command = () => {
     );
   }
 
-  const icon = preferences.menubarTaskCount
+  const icon = showTaskCount
     ? Icon.CheckList
     : priorityToIcon(topTask.priority).icon;
 

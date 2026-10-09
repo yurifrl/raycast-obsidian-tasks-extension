@@ -106,23 +106,38 @@ export const getTargetFilePath = async (): Promise<string> => {
 
   if (preferences.useDailyNote && preferences.dailyNotesFolder) {
     const pattern = preferences.dailyNotePattern || "YYYY-MM-DD";
+    const today = new Date();
+    const todayFilename = formatDatePattern(today, pattern) + ".md";
 
-    // First try to find today's daily note
+    // 1. Try today's note in configured daily notes folder
     const todayPath = await getTodayDailyNotePath(preferences.dailyNotesFolder, pattern);
     if (todayPath) {
       return todayPath;
     }
 
-    // Fall back to the latest daily note
+    // 2. Try latest note in configured daily notes folder
     const latestPath = await findLatestDailyNote(preferences.dailyNotesFolder, pattern);
     if (latestPath) {
       return latestPath;
     }
 
-    // If no daily notes exist, create today's
-    const today = new Date();
-    const filename = formatDatePattern(today, pattern) + ".md";
-    return path.join(preferences.dailyNotesFolder, filename);
+    // 3. Fall back to vault root (parent of daily notes folder)
+    const vaultRoot = path.dirname(preferences.dailyNotesFolder);
+
+    // 4. Try today's note in vault root
+    const rootTodayPath = path.join(vaultRoot, todayFilename);
+    if (await fs.pathExists(rootTodayPath)) {
+      return rootTodayPath;
+    }
+
+    // 5. Try latest daily note in vault root
+    const rootLatestPath = await findLatestDailyNote(vaultRoot, pattern);
+    if (rootLatestPath) {
+      return rootLatestPath;
+    }
+
+    // 6. Nothing found anywhere — create today's note in vault root
+    return path.join(vaultRoot, todayFilename);
   }
 
   return getTasksFilePath();
@@ -171,6 +186,7 @@ export const readTasksFromFile = async (filePath: string): Promise<TaskFile> => 
 
     return {
       content: content,
+      parsedContent: fileContent,
       tasks: tasks,
       path: filePath,
     };

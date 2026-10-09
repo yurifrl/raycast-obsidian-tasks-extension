@@ -3,7 +3,7 @@
   "name": "obsidian-tasks",
   "version": "1.2.0",
   "title": "Obsidian Tasks",
-  "description": "Manage your Obsidian Tasks through Raycast",
+  "description": "Manage your Obsidian Tasks through Raycast (v1.2.0)",
   "icon": "command-icon.png",
   "author": "yuri_freire",
   "contributors": ["ozencb"],
@@ -159,10 +159,25 @@
     {
       "name": "maxMenubarDescriptionLength",
       "title": "Max Description Length",
-      "description": "Maximum length of task description to show in menubar",
+      "description": "Maximum length of task description to show in menubar dropdown items",
       "type": "textfield",
       "default": "30",
       "required": true
+    },
+    {
+      "name": "menubarTitleMaxLength",
+      "title": "Max Menubar Title Length",
+      "description": "Maximum number of characters for the task title shown in the macOS menu bar (0 = no limit)",
+      "type": "textfield",
+      "default": "0",
+      "required": false
+    },
+    {
+      "name": "menubarTitleDelimiter",
+      "title": "Menubar Title Delimiter",
+      "description": "Delimiter to split the task title (e.g. '->' or ':'). Only the text before the delimiter is shown in the menu bar",
+      "type": "textfield",
+      "required": false
     },
     {
       "name": "refreshIntervalInMinutes",
@@ -171,6 +186,31 @@
       "type": "textfield",
       "default": "1",
       "required": true
+    },
+    {
+      "name": "reminderIntervalInMinutes",
+      "title": "Task Reminder Interval",
+      "description": "Show a HUD reminder of the current task every N minutes (0 = disabled)",
+      "type": "textfield",
+      "default": "0",
+      "required": false
+    },
+    {
+      "name": "testReminder",
+      "title": "Test Reminder",
+      "description": "Toggle this checkbox to fire a test HUD reminder",
+      "type": "checkbox",
+      "default": false,
+      "required": false,
+      "label": "Test reminder now"
+    },
+    {
+      "name": "reminderDurationInSeconds",
+      "title": "Reminder Duration",
+      "description": "How long the HUD reminder stays visible in seconds",
+      "type": "textfield",
+      "default": "3",
+      "required": false
     }
   ],
   "dependencies": {
